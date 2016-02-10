@@ -26,4 +26,7 @@ class RandomPlayer < Player
 
   def log_last_shot(shot_hit, sunk_ship)
   end
+
+  def log_game_won(game_won)
+  end
 end

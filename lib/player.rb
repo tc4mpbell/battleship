@@ -40,6 +40,7 @@ class Player
     self.respond_to?(:prepare_for_new_game) &&
       self.respond_to?(:place_ships) &&
       self.respond_to?(:take_shot) &&
-      self.respond_to?(:log_last_shot)
+      self.respond_to?(:log_last_shot) &&
+      self.respon_to?(:log_game_won)
   end
 end

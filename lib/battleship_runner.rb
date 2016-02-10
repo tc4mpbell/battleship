@@ -26,6 +26,8 @@ class BattleshipRunner
   rescue Player::MisplayError => e # if someone misplays, other player wins
     puts "Player Misplayed: #{e.message}\n#{e.backtrace.join("\n")}"
     record_misplay e.player
+  ensure
+    notify_win_status
   end
 
   private
@@ -94,5 +96,15 @@ class BattleshipRunner
     def record_misplay(player)
       # giver every other player a win
       @wins.keys.each { |other_player| @wins[other_player] += 1 unless other_player == player }
+    end
+
+    def notify_win_status
+      @boards.each do |player, board| 
+        begin
+          player.handle.log_game_won(!board.all_ships_sunk?)
+        rescue Player::MisplayError
+          # we're going to allow it, can't really translate to game loss since it's over
+        end
+      end
     end
 end
