@@ -3,6 +3,11 @@ class RandomPlayer < Player
   end
 
   def prepare_for_new_game
+    @shots_to_take = (0...10).collect { |row| 
+                       (0...10).collect { |col| 
+                         [row, col] 
+                       }
+                     }.flatten(1).shuffle
   end
 
   def place_ships
@@ -21,7 +26,7 @@ class RandomPlayer < Player
   end
 
   def take_shot
-    return rand(10), rand(10)
+    @shots_to_take.pop
   end
 
   def log_last_shot(shot_hit, sunk_ship)
