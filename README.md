@@ -40,7 +40,7 @@ end
 
 3. `take_shot`: This method returns a `row` and `col` that represent the shot you would like to take on your opponent's board. Obviously, both should fall within the range 0-9. And this will be called on each of your turns.
 
-4. `log_last_shot(shot_hit, sunk_ship)`: `shot_hit` is a boolean, `true` if your last shot hit an opponent's ship. `sunk_ship` is a boolean, `true` if your last shot sunk an opponent's ship.
+4. `log_last_shot(shot_hit, sunk_ship)`: This method is called after you shoot at an opponent's board and provides the results of that action. `shot_hit` is a boolean, `true` if your last shot hit an opponent's ship. `sunk_ship` is a boolean, `true` if your last shot sunk an opponent's ship.
 
 5. `log_game_won(game_won)`: This method is called at the end of a game. `game_won` is `true` if you won the game.
 
