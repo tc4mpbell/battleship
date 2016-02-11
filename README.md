@@ -2,18 +2,22 @@
 It's time to find out who's the better programmer, by crushing your co-workers in naval warfare. You'll do so by implementing a simple AI for playing ~~hundreds~~ thousands of games against someone else's AI. Here's how that'll work.
 
 ### What's in this repository
-Everything you need to pit to Battleship AIs against each other. As well as a couple of example Battleship AIs.
+Everything you need to pit two Battleship AIs against each other. As well as a couple of example Battleship AIs.
 
 ### Getting Started
 1. Install Gosu (for running with the GUI option). You can find install instructions for your system [here](https://github.com/gosu/gosu/wiki).
+
 2. Install gems
-`bundle install`
+    bundle install
+
 3. Run an example game with the dummy AIs
-`bundle exec ruby -o RandomPlager -t ScannerPlayer`
+     bundle exec ruby -o RandomPlager -t ScannerPlayer
+
 4. Or run an example game with the GUI
-`bundle exec ruby -o RandomPlager -t ScannerPlayer --gui`
+    bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
+
 5. And for more options
-`bundle exec ruby -h`
+    bundle exec ruby -h
 
 ### How do I make my own player?
 It's easy! Just create a file in `players/`. In that file, you'll define a class that extends `Player` so:
@@ -32,7 +36,7 @@ Your player class is responsible for implementing the following methods:
 4. `log_last_shot(shot_hit, sunk_ship)`: `shot_hit` is a boolean, `true` if your last shot hit an opponent's ship. `sunk_ship` is a boolean, `true` if your last shot sunk an opponent's ship.
 5. `log_game_won(game_won)`: This method is called at the end of a game. `game_won` is `true` if you won the game.
 
-`players/examples/` has two example you can use as a starting point.
+`players/examples/` has two examples you can use as a starting point.
 
 ### Rules
 Besides the actual [battleship rules](https://en.wikipedia.org/wiki/Battleship_(game)), there are four additional rules:
@@ -67,6 +71,6 @@ Please do! Game enhancements, code enhancements, whatever!
 ### License
 To give credit where credit is due: I first saw this as a programming project in a class taught by Stephen Davies ([UMW Listing](http://www.umw.edu/directory/employee/stephen-davies/)). The code is mine, but the idea was his.
 
-This project is in no way affiliated with any other products trademarked "Battleship". The background image in `media/` is not mine either. It's watermarked by an "Eidos Studios". 
+This project is in no way affiliated with any other products trademarked "Battleship". The background image in `media/` is not mine. It's watermarked by an "Eidos Studios". 
 
 Other than that, anyone is free to do anything they would like with the remaining artifacts in this repository.
