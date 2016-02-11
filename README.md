@@ -8,15 +8,19 @@ Everything you need to pit two Battleship AIs against each other. As well as a c
 1. Install Gosu (for running with the GUI option). You can find install instructions for your system [here](https://github.com/gosu/gosu/wiki).
 
 2. Install gems
+    
     bundle install
 
 3. Run an example game with the dummy AIs
+     
      bundle exec ruby -o RandomPlager -t ScannerPlayer
 
 4. Or run an example game with the GUI
+    
     bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
 
 5. And for more options
+    
     bundle exec ruby -h
 
 ### How do I make my own player?
