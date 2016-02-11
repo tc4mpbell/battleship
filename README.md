@@ -48,9 +48,13 @@ end
 
 ## Rules
 Besides the actual [battleship rules](https://en.wikipedia.org/wiki/Battleship_(game)), there are four additional rules:
+
 1. No cheating! The point of this exercise is not to manipulate Ruby's object space--it's to create a better Battleship player.
+
 2. If your player class fails to return a valid board, you lose the game.
+
 3. If your player class causes an error at anytime, you lose the game.
+
 4. If your player class fails to complete any of the 5 methods in 1 second or less, you lose the game. **I may adjust this to a shorter timeout.**
 
 ## What's that .irbrc file?
