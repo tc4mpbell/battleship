@@ -1,37 +1,29 @@
-### Battleship
+## Battleship
 It's time to find out who's the better programmer, by crushing your co-workers in naval warfare. You'll do so by implementing a simple AI for playing ~~hundreds~~ thousands of games against someone else's AI. Here's how that'll work.
 
-### What's in this repository
+## What's in this repository
 Everything you need to pit two Battleship AIs against each other. As well as a couple of example Battleship AIs.
 
-### Getting Started
+## Getting Started
 1. Install Gosu (for running with the GUI option). You can find install instructions for your system [here](https://github.com/gosu/gosu/wiki).
 
 2. Install gems
     
-```bash
-bundle install
-```
+        $ bundle install
 
 3. Run an example game with the dummy AIs
-     
-```bash
-bundle exec ruby -o RandomPlager -t ScannerPlayer
-```
+
+        $ bundle exec ruby -o RandomPlager -t ScannerPlayer
 
 4. Or run an example game with the GUI
     
-```bash
-bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
-```
+        $ bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
 
 5. And for more options
     
-```bash
-bundle exec ruby -h
-```
+        $ bundle exec ruby -h
 
-### How do I make my own player?
+## How do I make my own player?
 It's easy! Just create a file in `players/`. In that file, you'll define a class that extends `Player` so:
 
 ```ruby
@@ -40,7 +32,7 @@ class SmartPlayer < Player
 end
 ```
 
-Your player class is responsible for implementing the following methods:
+### Your player class is responsible for implementing the following methods
 
 1. `prepare_for_new_game`: This method gets called at the start of every new game. Anything your player needs to do to get ready for a game should be done here.
 
@@ -54,14 +46,14 @@ Your player class is responsible for implementing the following methods:
 
 `players/examples/` has two examples you can use as a starting point.
 
-### Rules
+## Rules
 Besides the actual [battleship rules](https://en.wikipedia.org/wiki/Battleship_(game)), there are four additional rules:
 1. No cheating! The point of this exercise is not to manipulate Ruby's object space--it's to create a better Battleship player.
 2. If your player class fails to return a valid board, you lose the game.
 3. If your player class causes an error at anytime, you lose the game.
 4. If your player class fails to complete any of the 5 methods in 1 second or less, you lose the game. **I may adjust this to a shorter timeout.**
 
-### What's that .irbrc file?
+## What's that .irbrc file?
 I like to have project specific irb settings that take care of loading all the objects I may need. You can take advantage of this by adding the following to your `~/.irbrc` file:
 
 ```ruby
@@ -78,13 +70,13 @@ end
 load_irbrc Dir.pwd # starts the .irbrc load process, and should stay at the bottom
 ```
 
-### What's that loader.rb file?
+## What's that loader.rb file?
 It loads all of our gems and class files. `battleship.rb` (the executable file) requires that file, and by doing so takes care of all of our dependency loading. This mimics a "rails-like" auto-loading setup. 
 
-### Contributing
+## Contributing
 Please do! Game enhancements, code enhancements, whatever!
 
-### License
+## License
 To give credit where credit is due: I first saw this as a programming project in a class taught by Stephen Davies ([UMW Listing](http://www.umw.edu/directory/employee/stephen-davies/)). The code is mine, but the idea was his.
 
 This project is in no way affiliated with any other products trademarked "Battleship". The background image in `media/` is not mine. It's watermarked by an "Eidos Studios". 
