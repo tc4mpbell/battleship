@@ -9,19 +9,27 @@ Everything you need to pit two Battleship AIs against each other. As well as a c
 
 2. Install gems
     
-    bundle install
+```bash
+bundle install
+```
 
 3. Run an example game with the dummy AIs
      
-     bundle exec ruby -o RandomPlager -t ScannerPlayer
+```bash
+bundle exec ruby -o RandomPlager -t ScannerPlayer
+```
 
 4. Or run an example game with the GUI
     
-    bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
+```bash
+bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
+```
 
 5. And for more options
     
-    bundle exec ruby -h
+```bash
+bundle exec ruby -h
+```
 
 ### How do I make my own player?
 It's easy! Just create a file in `players/`. In that file, you'll define a class that extends `Player` so:
@@ -34,10 +42,14 @@ end
 
 Your player class is responsible for implementing the following methods:
 
-1. `prepare_for_new_game`: This method gets called at the start of every new game. Anything your player needs to do to get ready for a game should be done here. 
+1. `prepare_for_new_game`: This method gets called at the start of every new game. Anything your player needs to do to get ready for a game should be done here.
+
 2. `place_ships`: This method returns a 10x10 2D array that represents a board. `lib/board.rb` has `Board::MARKERS` and `Board::LENGTHS` that define what markers you should use to represent a ship being in that space. Your board will be validated to ensure that all ships exist, are the appropriate length, and are all continuous.
+
 3. `take_shot`: This method returns a `row` and `col` that represent the shot you would like to take on your opponent's board. Obviously, both should fall within the range 0-9. And this will be called on each of your turns.
+
 4. `log_last_shot(shot_hit, sunk_ship)`: `shot_hit` is a boolean, `true` if your last shot hit an opponent's ship. `sunk_ship` is a boolean, `true` if your last shot sunk an opponent's ship.
+
 5. `log_game_won(game_won)`: This method is called at the end of a game. `game_won` is `true` if you won the game.
 
 `players/examples/` has two examples you can use as a starting point.
