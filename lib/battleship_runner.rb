@@ -18,7 +18,6 @@ class BattleshipRunner
   end
 
   def run_game
-    puts "Running game at: #{Time.now}"
     prepare_players_for_new_game
     reset_boards
     play_game if boards_valid?
@@ -51,7 +50,6 @@ class BattleshipRunner
       turn = 0
 
       begin
-        puts "Taking turn #{turn} at: #{Time.now}"
         shooting = shooting_player(play_order, turn)
         answering = answering_player(play_order, turn)
 

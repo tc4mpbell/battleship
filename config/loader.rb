@@ -5,6 +5,7 @@ ROOT = File.expand_path '../..', __FILE__
 # load all gems
 require 'timeout'
 require 'gosu'
+require 'optparse'
 
 # load all lib files
 Dir.glob(File.join(ROOT, 'lib/*.rb')).each do |model_file|

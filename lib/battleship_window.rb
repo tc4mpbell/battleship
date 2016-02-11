@@ -1,5 +1,3 @@
-require_relative File.join(File.dirname(__FILE__), 'config/loader.rb')
-
 class BattleshipWindow < Gosu::Window
   WIDTH = 1280
   HEIGHT = 800
@@ -82,5 +80,5 @@ class BattleshipWindow < Gosu::Window
 end
 
 # ---- begin ----
-window = BattleshipWindow.new(RandomPlayer.new, ScannerPlayer.new, 100)
-window.show
+# window = BattleshipWindow.new(RandomPlayer.new, ScannerPlayer.new, 100)
+# window.show
