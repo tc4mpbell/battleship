@@ -80,6 +80,304 @@ It loads all of our gems and class files. `battleship.rb` (the executable file) 
 ## Contributing
 Please do! Game enhancements, code enhancements, whatever!
 
+## Basic Ruby You'll Need
+
+### Printing and Strings
+`puts` prints to STDOUT. It stands for "put string". So "Hello World" in Ruby is simply:
+
+```ruby
+puts 'Hello World'
+```
+
+Concatenation and Interpolation
+
+```ruby
+name = 'John' + 'Smith' #=> 'John Smith'
+
+first_name = 'John'
+last_name = 'Smith'
+full_name = first_name + last_name #=> 'John Smith'
+
+# this is string interpolation in ruby. it requires double quotes (""). strings in double ("") are
+# evaluated for interpolation and special characters like "\n" for newline.
+full_name = "#{first_name} #{last_name}" #=> John Smith
+```
+
+### Branching and Loops
+
+Branching constructs
+
+```ruby
+# if by itself
+if true
+  puts 'true'
+end
+
+# if with else
+if false
+  puts 'false'
+else
+  puts 'true'
+end
+
+# if with elsif which prevents nested if/else blocks to check multiple conditions
+if the_first_thing_is_true
+  puts 'the first thing'
+elsif the_second_thing_is_true
+  puts 'the second thing'
+else
+  puts 'the third thing, since the first and second things were false'
+end
+
+# for simple "not" expressions we can use "unless", so this...
+if !false
+  puts 'true'
+end
+
+# ...equals this
+unless false
+  puts 'true'
+end
+```
+
+A lot of classes come with enumerator methods, which should be favored when available, but some looping constructs:
+
+```ruby
+# for loop exclusive at the top end,
+# prints to STDOUT:
+# 0
+# 1
+# 2
+# 3
+# 4
+for i in 0...5 do
+  puts i
+end
+
+# for loop inclusive at the top end,
+# prints to STDOUT:
+# 0
+# 1
+# 2
+# 3
+# 4
+# 5
+for i in 0..5 do
+  puts i
+end
+
+# while loop
+# prints to STDOUT:
+# 5
+# 4
+# 3
+# 2
+# 1
+# 0
+x = 5
+while x >= 0 do 
+  puts x
+  x -= 1
+end
+```
+
+### Truthy and Falsy
+
+Everything in ruby is an object, and all objects evaluate to `true`, except `false` and `nil`:
+
+```ruby
+x = "some string"
+
+if x
+  puts 'true' # evaluated
+end
+
+if nil
+  # not evaluated
+end
+
+if false
+  # not evaluated
+end
+
+if 0
+  puts '0' # evaluated
+end
+```
+
+### Blocs
+
+Some methods take blocks (and you'll seem some below). blocks are basically, "snippets of code" we want to run. They are defined by `{ do_stuff }` after a method call for single line blocs or the following for multi line methods:
+
+```ruby
+object.some_method_that_takes_a_bloc do
+   # ...many lines of code here...
+end
+```
+
+Some blocs take parameter(s) in which case we define them like so:
+
+```ruby
+object.method_with_block { |just_one_parameter| just_one_parameter.do_stuff }
+
+object.other_method_with_block do |parameter_one, parameter_two|
+  # ...do stuff with both parameters...
+end
+```
+
+### Arrays
+
+Arrays can hold any object, simultaneously. They are typically created with the implicit initializer `[]`. They have a lot of convenience methods we'll show below.
+
+```ruby
+array = [] # starts the array of empty
+array.empty? #=> true
+
+array = ['red', 'blue', 'green']
+array.length #=> 3
+array[0] #=> 'red'
+array[1] #=> 'blue'
+
+array[1] = 'yellow' # array is now ['red, 'yellow', 'green']
+array[1] = 'blue'
+
+array.pop #=> removes the last element of the array and returns it
+          #=> array = ['red', 'blue']
+
+array << 'green' #=> adds an element to the end of an array
+                 #=> array = ['red', 'blue', 'green']
+
+array.each { |color| puts 'color' } # prints to STDOUT:
+                                    # 'red'
+                                    # 'blue'
+                                    # 'green'
+
+array.each do |color| # the exact same, but with a different syntax
+  puts 'color'
+end
+
+array.map { |color| color.length } # returns a new array of [3, 4, 5]
+
+array.map(&:length) # the same as above, but a short hand way of calling .length on each element,
+                    # we can do this with any method
+
+array.collect(&:length) # collect is an alias (read the same) as map
+
+array.map!(&:length) # changes array in place to equal [3, 4, 5]
+                     # often, ruby uses methods ending in ! to symbolize that it changes data, or is
+                     # unsafe
+
+array = ['red', 'blue', 'green']
+
+array.each_with_index { |color, index| puts index + ": " + color } # slightly different enumerator
+                                                                   # that provides the index as well
+```
+
+### Symbols
+Basically these are special strings for which only one ever exists (they're immutable). They start with a ":".
+
+```ruby
+x = "string"
+y = "string"
+
+# declaring two strings, doesn't make them the same object in memory
+x == y #=> true
+x.object_id == y.object_id #=> false
+
+# declaring two symbols, does
+x = :symbol
+y = :symobl
+
+x == y #=> true
+x.object_id == y.object_id #=> true
+```
+
+Basically, because of this, Rubyists like to use symbols in hashes.
+
+### Hashes
+Hashes can hold any keys and values of any object. They are typically created with the implicit initializer `{}`. Hashes have no guaranteed order.
+
+```ruby
+hash = {} #=> creates an empty hash
+
+# normally, we declare key, value pairs with the "hash-rocket" (=>)
+hash = { 'red' => 3, 'blue' => 4, 'green' => 5 }
+# hash is a hash of strings to lengths
+
+# however, there's a special syntax for we can use for symbols called colon syntax
+hash = { red: 3, blue: 4, green: 5 }
+# hash is a hash of symbols to lengths
+
+# once we have a hash we can add to it with bracket syntax []
+hash[:yellow] = 6
+
+# Enumerators exist for hashes as well, but the order here is indeterminable
+hash.each do |key, value| 
+  puts key + ": " + value
+end
+
+# prints to STDOUT:
+# blue: 4
+# green: 5
+# red: 3
+# yellow: 6
+```
+
+### Classes
+
+Define a new class
+
+```ruby
+# normal class
+class Person
+end
+
+# subclass
+class Programmer < Person
+end
+```
+
+Define an initializer. The initializer is called when `.new` is called on a class, and a new instance of that class is returned. We can define instance variables in the initializer by proceeding the variable name with an `@`. (We can create class level variables with `@@`, but you shouldn't need to do that.)
+
+```ruby
+class Person
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name = last_name
+  end
+end
+
+p = Person.new('John', 'Smith')
+```
+
+Define methods on a class
+
+```ruby
+class Person
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name = last_name
+  end
+
+  def full_name
+    "#{first_name} #{last_name}" # a method returns the last expression evaluated, so this method...
+  end
+
+  def legal_name
+    return "#{first_name} #{last_name}" # ... returns the same thing this one does.
+  end
+
+  def self.no_good_example # proceed a method with 'self.' to create class level methods
+    'You called no_good_example on the Person class'
+  end
+end
+
+p = Person.new('John', 'Smith')
+p.full_name #=> John Smith
+p.legal_name #=> John Smith
+Person.no_good_example #=> You called no_good_example on the Person class
+```
+
 ## License
 To give credit where credit is due: I first saw this as a programming project in a class taught by Stephen Davies ([UMW Listing](http://www.umw.edu/directory/employee/stephen-davies/)). The code is mine, but the idea was his.
 
