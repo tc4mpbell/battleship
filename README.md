@@ -13,15 +13,15 @@ Everything you need to pit two Battleship AIs against each other. As well as a c
 
 3. Run an example game with the dummy AIs
 
-        $ bundle exec ruby -o RandomPlager -t ScannerPlayer
+        $ bundle exec ruby battleship.rb -o RandomPlayer -t ScannerPlayer
 
 4. Or run an example game with the GUI
     
-        $ bundle exec ruby -o RandomPlager -t ScannerPlayer --gui
+        $ bundle exec ruby battleship.rb -o RandomPlayer -t ScannerPlayer --gui
 
 5. And for more options
     
-        $ bundle exec ruby -h
+        $ bundle exec ruby battleship.rb -h
 
 ## How do I make my own player?
 It's easy! Just create a file in `players/`. In that file, you'll define a class that extends `Player` so:
