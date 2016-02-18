@@ -105,8 +105,6 @@ full_name = "#{first_name} #{last_name}" #=> John Smith
 
 ### Branching and Loops
 
-Branching constructs
-
 ```ruby
 # if by itself
 if true
@@ -313,7 +311,7 @@ hash[:yellow] = 6
 
 # Enumerators exist for hashes as well, but the order here is indeterminable
 hash.each do |key, value| 
-  puts key + ": " + value
+  puts "#{key}: #{value}"
 end
 
 # prints to STDOUT:
