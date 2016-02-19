@@ -61,6 +61,7 @@ class BattleshipRunner
                                 [false, false]
                               end
 
+        answering.handle.log_opponent_attack(row, col, shot_hit, sunk_ship) if answering.respond_to?(:log_opponent_attack)
         shooting.handle.log_last_shot(shot_hit, sunk_ship)
 
         turn += 1

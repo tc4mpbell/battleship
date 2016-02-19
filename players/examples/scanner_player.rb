@@ -35,6 +35,10 @@ class ScannerPlayer < Player
     return @row, @col
   end
 
+  def log_opponent_attack(row, col, shot_hit, sunk_ship) 
+    #puts "THEY ATTACKED #{row}x#{col}: #{shot_hit ? "HIT" : "MISS"} #{"-- SUNK" if sunk_ship}"
+  end
+
   def log_last_shot(shot_hit, sunk_ship)
   end
 
