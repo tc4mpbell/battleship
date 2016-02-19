@@ -48,7 +48,7 @@ end
 
 ### Optional methods you can implement
 
-1. `log_opponent_attack(row, col, shot_hit, sunk_ship)`: This method is called on each of your opponent's turns, provided you've implemented it. It provides you the row,col your opponent shot at, as well as the results of that shot. Thanks @tc4mpbell, for adding that!
+1. `log_opponent_attack(row, col, shot_hit, sunk_ship)`: This method is called on each of your opponent's turns, provided you've implemented it. It provides you the row,col your opponent shot at, as well as the results of that shot. Thanks [@tc4mpbell](https://github.com/tc4mpbell), for adding that!
 
 ## Rules
 Besides the actual [battleship rules](https://en.wikipedia.org/wiki/Battleship_(game)), there are four additional rules:
