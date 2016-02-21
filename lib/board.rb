@@ -13,7 +13,7 @@ class Board
     battleship: 'B',
     submarine:  'S',
     destroyer:  'D',
-    partrol:    'P',
+    patrol:     'P',
     hit:        'X',
     empty:      ' '
   }
@@ -23,7 +23,7 @@ class Board
     battleship: 4,
     submarine:  3,
     destroyer:  3,
-    partrol:    2
+    patrol:     2
   }
 
   def initialize(board)
