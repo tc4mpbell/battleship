@@ -19,10 +19,10 @@ class BetterScannerPlayer < Player
     @col = -1
     @num_shots = 0
     @num_attacks = 0
-    @num_openings_to_track = 15
+    @num_openings_to_track = 25
     #@last_hit = []
     @queue = []
-    @last_spot_tried = [0,1]
+    @last_spot_tried = [0,-1]
 
     @enemy_board = [
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -96,7 +96,7 @@ class BetterScannerPlayer < Player
           @board = goodBoard if goodBoard
           break if goodBoard
         else
-          puts "SKIPPED: #{x} #{y}"
+          #puts "SKIPPED: #{x} #{y}"
           num_times_looped += 1
         end
       end
@@ -138,7 +138,7 @@ class BetterScannerPlayer < Player
   end
 
   def valid_spot_to_shoot? row, col
-    @enemy_board[@row][@col] == ' ' and row < @board.length and row >= 0 and col < @board[0].length and col >= 0
+    (@enemy_board[row][col] == ' ' and row < @board.length and row >= 0 and col < @board[0].length and col >= 0)
   end
 
   # check spots 
@@ -150,20 +150,25 @@ class BetterScannerPlayer < Player
       last_row = @last_spot_tried[0]
       last_col = @last_spot_tried[1]
 
-      if last_row == @board.length - 1 #at end of board; shouldn't happen
-        puts "Shouldn't be here..."
-        last_row = -1
-      end
-
       if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
+        if last_row == @board.length - 1 #at end of board; shouldn't happen
+          puts "Shouldn't be here..."
+          last_row = 0
+        end
+
+        @last_spot_tried = last_row + 1, 0
+      elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
+        if last_row == @board.length - 1 #at end of board; shouldn't happen
+          puts "Shouldn't be here..."
+          last_row = 0
+        end
+
         @last_spot_tried = last_row + 1, 1
       else
-        @last_spot_tried = last_row + 1, 0
+        @last_spot_tried = last_row, last_col + 2
       end
 
-      puts "NEW SPOT CHOSEN: #{@last_spot_tried}"
-
-      return if valid_spot_to_shoot?(@last_spot_tried)
+      return @last_spot_tried if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
     end
   end
 
@@ -182,44 +187,46 @@ class BetterScannerPlayer < Player
 
     @num_shots += 1
 
-    return get_next_spot_to_shoot
-
     if @queue.length > 0
-      return @queue.pop
+      spot = @queue.pop
     else 
-      return random_valid_spot
+      spot = get_next_spot_to_shoot
     end
 
-    loop do
-      if @last_hit.length > 0
-        # try all around this one -- push and pop as try and succeed/fail
-        hit = @last_hit.last
-        #if @last_hit.length == 1 
-          if hit[1] <= 10
-            # don't yet know direction, pick horizontal
-            @col = hit[1] + 1
-          elsif hit[0] <= 10
-            @row = hit[0] + 1
-          end
-        # else
-        #   #multiple hits! we have direction.
+    #puts "NEW SPOT! : #{spot}"
+    @row = spot[0]
+    @col = spot[1]
 
-        # end
-      else 
+    # loop do
+    #   if @last_hit.length > 0
+    #     # try all around this one -- push and pop as try and succeed/fail
+    #     hit = @last_hit.last
+    #     #if @last_hit.length == 1 
+    #       if hit[1] <= 10
+    #         # don't yet know direction, pick horizontal
+    #         @col = hit[1] + 1
+    #       elsif hit[0] <= 10
+    #         @row = hit[0] + 1
+    #       end
+    #     # else
+    #     #   #multiple hits! we have direction.
 
-        @col += @last_shot_hit ? 1 : 1
+    #     # end
+    #   else 
 
-        if @col >= 10 # finished row, wrap down
-          @last_shot_hit = false
-          @row += 1
-          @col = 0 
-        end
+    #     @col += @last_shot_hit ? 1 : 1
 
-        @row = 0 if @row >= 10 # game should will end before this, but just incase
-      end
+    #     if @col >= 10 # finished row, wrap down
+    #       @last_shot_hit = false
+    #       @row += 1
+    #       @col = 0 
+    #     end
 
-      break if @enemy_board[@row][@col] == ' ' #not been tried yet.
-    end
+    #     @row = 0 if @row >= 10 # game should will end before this, but just incase
+    #   end
+
+    #   break if @enemy_board[@row][@col] == ' ' #not been tried yet.
+    # end
 
     #puts "BSP: I'm shooting: #{@row} #{@col}"
     
@@ -249,11 +256,16 @@ class BetterScannerPlayer < Player
   # when we get a hit, call this to queue up the next spots to try
   def update_queue_from_hit hit_row, hit_col
     @queue = []
+    #puts "HIT AT #{hit_row}, #{hit_col}"
     # 0,0 is topleft...
     @queue << [hit_row+1, hit_col] if valid_spot_to_shoot?(hit_row+1, hit_col)      # DOWN
     @queue << [hit_row-1, hit_col] if valid_spot_to_shoot?(hit_row-1, hit_col)      # UP
     @queue << [hit_row, hit_col+1] if valid_spot_to_shoot?(hit_row, hit_col+1)      # RIGHT
     @queue << [hit_row, hit_col-1] if valid_spot_to_shoot?(hit_row, hit_col-1)      # LEFT
+
+    #puts "QUEUE! : #{@queue}"
+
+    @queue
   end
 
   def log_last_shot(shot_hit, sunk_ship)
@@ -270,13 +282,19 @@ class BetterScannerPlayer < Player
     else
       @enemy_board[@row][@col] = '-'
     end
+
+    #print_board @enemy_board
+  end
+
+  def print_board board
+    board.each do |row|
+      puts "#{row}\n"
+    end
   end
 
   def log_game_won(game_won)
     puts "ENEMY BOARD"
-    @enemy_board.each do |row|
-      puts "#{row}\n"
-    end
+    print_board @enemy_board
 
     puts "OPENINGS"
     @enemy_opening_shots.each do |row|
