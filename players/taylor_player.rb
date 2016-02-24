@@ -1,3 +1,5 @@
+require 'benchmark'
+
 # STRATS:
 # Check every other space if randomly looking (less work, will still find them all)
 # Place ships randomly, but keep track of the other guy's opening salvos, avoid placing my ships in those spots if possible
@@ -6,9 +8,15 @@
 # - If have two hits next to each other, have a direction, so just keep checking front and back (instead of sides)
 # - Don't always start top left; pick center-ish spot
 
+# Current issues:
+# Loops way too long getting a new spot to shoot
+  # issue is that it's going over the same spots again and again
+  # REAL issue is that the queue isn't being completely processed after a hit, so if it hits in the middle, it'll just go down the line but never come back
+  # Tried to fix this by not clearing queue... dunno what's up.
+
 class TaylorPlayer < Player
   def initialize
-    @DEBUG = true
+    @DEBUG = false
 
     @enemy_opening_shots = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -60,7 +68,7 @@ class TaylorPlayer < Player
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
     ]
 
-    @last_spot_tried = [0,0] # initial_spot_to_shoot
+    @last_spot_tried = initial_spot_to_shoot
     puts "INIT SPOT: #{@last_spot_tried}" if @DEBUG
   end
 
@@ -167,33 +175,52 @@ class TaylorPlayer < Player
   # - next x: if x == col.len - 1 (at very end), x = 1 
   #     else x = 0
   def get_next_spot_to_shoot
-    loop do
-      last_row = @last_spot_tried[0]
-      last_col = @last_spot_tried[1]
+    ix = 0
+    time = Benchmark.measure do
+      loop do
+        ix += 1
+        #puts "(in loop #{ix+1})"
+        # if @just_sunk
+        #   @last_spot_tried = initial_spot_to_shoot 
+        # else 
+          last_row = @last_spot_tried[0]
+          last_col = @last_spot_tried[1]
 
-      if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
-        #puts "AT LAST COL: #{last_col}"
-        if last_row == @board.length - 1 #at end of board; jump to top
-          next_row = 0
-        else
-          next_row = last_row + 1
+          if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
+            #puts "AT LAST COL: #{last_col}"
+            if last_row == @board.length - 1 #at end of board; jump to top
+              #puts "1. Jumped to top from #{@last_spot_tried}"
+              next_row = 0
+            else
+              next_row = last_row + 1
+            end
+
+            @last_spot_tried = next_row, 0
+          elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
+            if last_row == @board.length - 1 #at end of board; jump to top
+              #puts "2. Jumped to top from #{@last_spot_tried}"
+              next_row = 0
+            else
+              next_row = last_row + 1
+            end
+
+            @last_spot_tried = next_row, 1
+          else
+            @last_spot_tried = last_row, last_col + 2
+          end
+        #end
+
+        puts "TRYING: #{@last_spot_tried}"
+
+        if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
+          @just_sunk = false # update
+          break
         end
-
-        @last_spot_tried = next_row, 0
-      elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
-        if last_row == @board.length - 1 #at end of board; jump to top
-          next_row = 0
-        else
-          next_row = last_row + 1
-        end
-
-        @last_spot_tried = next_row, 1
-      else
-        @last_spot_tried = last_row, last_col + 2
       end
-
-      return @last_spot_tried if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
     end
+    puts time
+
+    @last_spot_tried 
   end
 
   def take_shot
@@ -204,7 +231,6 @@ class TaylorPlayer < Player
       ## 2.2 Hit: Push attempt;
       ## 2.3 IF miss, pop and try a different one
 
-
       #######
       #####c WIP shoot algo. not working.
       #####
@@ -213,11 +239,17 @@ class TaylorPlayer < Player
 
     if @queue.length > 0
       spot = @queue.pop
+      puts "LOOKING AROUND LAST HIT" if @DEBUG
+      print_board @enemy_board if @DEBUG
     else 
+      puts "BEFORE GET NEXT"
       spot = get_next_spot_to_shoot
+      puts "AFTER GET NEXT"
     end
 
     #puts "NEW SPOT! : #{spot}"
+    puts "OUT of loop"
+    puts "SHOOTING: #{spot}" if @DEBUG
     @row = spot[0]
     @col = spot[1]
     
@@ -246,7 +278,8 @@ class TaylorPlayer < Player
 
   # when we get a hit, call this to queue up the next spots to try
   def update_queue_from_hit hit_row, hit_col
-    @queue = []
+    # don't erase old spots, in case we hit in the middle
+    #@queue = [] unless @queue
     #puts "HIT AT #{hit_row}, #{hit_col}"
     # 0,0 is topleft...
     @queue << [hit_row+1, hit_col] if valid_spot_to_shoot?(hit_row+1, hit_col)      # DOWN
@@ -266,7 +299,9 @@ class TaylorPlayer < Player
       # @last_hit.push([@row, @col])
 
       if sunk_ship
+        puts "BOOM SUNK" if @DEBUG
         @queue = []
+        @just_sunk = true
       else
         update_queue_from_hit(@row, @col)
       end
@@ -284,7 +319,8 @@ class TaylorPlayer < Player
   end
 
   def log_game_won(game_won)
-    if @DEBUG
+
+    #if @DEBUG
       puts "ENEMY BOARD"
       print_board @enemy_board
 
@@ -293,6 +329,6 @@ class TaylorPlayer < Player
         puts "#{row}\n"
       end
       puts "\t *** #{@num_shots}"
-    end
+    #end
   end
 end
