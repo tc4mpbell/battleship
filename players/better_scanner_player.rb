@@ -22,6 +22,7 @@ class BetterScannerPlayer < Player
     @num_openings_to_track = 15
     #@last_hit = []
     @queue = []
+    @last_spot_tried = [0,1]
 
     @enemy_board = [
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -140,6 +141,32 @@ class BetterScannerPlayer < Player
     @enemy_board[@row][@col] == ' ' and row < @board.length and row >= 0 and col < @board[0].length and col >= 0
   end
 
+  # check spots 
+  # - next y = y + 1
+  # - next x: if x == col.len - 1 (at very end), x = 1 
+  #     else x = 0
+  def get_next_spot_to_shoot
+    loop do
+      last_row = @last_spot_tried[0]
+      last_col = @last_spot_tried[1]
+
+      if last_row == @board.length - 1 #at end of board; shouldn't happen
+        puts "Shouldn't be here..."
+        last_row = -1
+      end
+
+      if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
+        @last_spot_tried = last_row + 1, 1
+      else
+        @last_spot_tried = last_row + 1, 0
+      end
+
+      puts "NEW SPOT CHOSEN: #{@last_spot_tried}"
+
+      return if valid_spot_to_shoot?(@last_spot_tried)
+    end
+  end
+
   def take_shot
     ## Strategies: 
     ## 1. Only check every other cell when looking for a fresh ship
@@ -154,6 +181,15 @@ class BetterScannerPlayer < Player
       #####
 
     @num_shots += 1
+
+    return get_next_spot_to_shoot
+
+    if @queue.length > 0
+      return @queue.pop
+    else 
+      return random_valid_spot
+    end
+
     loop do
       if @last_hit.length > 0
         # try all around this one -- push and pop as try and succeed/fail
@@ -224,13 +260,15 @@ class BetterScannerPlayer < Player
     #puts "BSP: #{shot_hit ? 'A HIT' : 'A MISS'}!"
     if shot_hit
       @enemy_board[@row][@col] = 'X'
-      @last_hit.push([@row, @col])
+      # @last_hit.push([@row, @col])
+
+      if sunk_ship
+        @queue = []
+      else
+        update_queue_from_hit(@row, @col)
+      end
     else
       @enemy_board[@row][@col] = '-'
-    end
-
-    if sunk_ship
-      last_hit = []
     end
   end
 
