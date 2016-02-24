@@ -1,5 +1,15 @@
+# STRATS:
+# Check every other space if randomly looking (less work, will still find them all)
+# Place ships randomly, but keep track of the other guy's opening salvos, avoid placing my ships in those spots if possible
+
+# Potential upgrades:
+# - If have two hits next to each other, have a direction, so just keep checking front and back (instead of sides)
+# - Don't always start top left; pick center-ish spot
+
 class TaylorPlayer < Player
   def initialize
+    @DEBUG = true
+
     @enemy_opening_shots = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -19,10 +29,10 @@ class TaylorPlayer < Player
     @col = -1
     @num_shots = 0
     @num_attacks = 0
-    @num_openings_to_track = 25
+    @num_openings_to_track = 10
     #@last_hit = []
     @queue = []
-    @last_spot_tried = [0,-1]
+    
 
     @enemy_board = [
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -49,6 +59,9 @@ class TaylorPlayer < Player
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
     ]
+
+    @last_spot_tried = [0,0] # initial_spot_to_shoot
+    puts "INIT SPOT: #{@last_spot_tried}" if @DEBUG
   end
 
   def place_ships
@@ -77,7 +90,7 @@ class TaylorPlayer < Player
     
 
     ships.each do |ship, length|
-      puts "SHIP: #{ship}, #{length}"
+      puts "SHIP: #{ship}, #{length}" if @DEBUG
       # invalid spots: 
       # - Overlapping another ship
       # - less than length spaces away from chosen edge
@@ -103,7 +116,7 @@ class TaylorPlayer < Player
     end
 
     @board.each do |row|
-      puts "#{row}\n"
+      puts "#{row}\n" if @DEBUG
     end
 
     @board
@@ -137,6 +150,14 @@ class TaylorPlayer < Player
     @board
   end
 
+  def initial_spot_to_shoot
+    # start middle-ish, fuzz it a bit by a couple in every direction
+    x = (@board[0].length / 2) + rand(-3..3)
+    y = (@board.length / 2) + rand(-3..3)
+
+    [x,y]
+  end
+
   def valid_spot_to_shoot? row, col
     (@enemy_board[row][col] == ' ' and row < @board.length and row >= 0 and col < @board[0].length and col >= 0)
   end
@@ -151,19 +172,22 @@ class TaylorPlayer < Player
       last_col = @last_spot_tried[1]
 
       if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
-        if last_row == @board.length - 1 #at end of board; shouldn't happen
-          puts "Shouldn't be here..."
-          last_row = 0
+        #puts "AT LAST COL: #{last_col}"
+        if last_row == @board.length - 1 #at end of board; jump to top
+          next_row = 0
+        else
+          next_row = last_row + 1
         end
 
-        @last_spot_tried = last_row + 1, 0
+        @last_spot_tried = next_row, 0
       elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
-        if last_row == @board.length - 1 #at end of board; shouldn't happen
-          puts "Shouldn't be here..."
-          last_row = 0
+        if last_row == @board.length - 1 #at end of board; jump to top
+          next_row = 0
+        else
+          next_row = last_row + 1
         end
 
-        @last_spot_tried = last_row + 1, 1
+        @last_spot_tried = next_row, 1
       else
         @last_spot_tried = last_row, last_col + 2
       end
@@ -196,39 +220,6 @@ class TaylorPlayer < Player
     #puts "NEW SPOT! : #{spot}"
     @row = spot[0]
     @col = spot[1]
-
-    # loop do
-    #   if @last_hit.length > 0
-    #     # try all around this one -- push and pop as try and succeed/fail
-    #     hit = @last_hit.last
-    #     #if @last_hit.length == 1 
-    #       if hit[1] <= 10
-    #         # don't yet know direction, pick horizontal
-    #         @col = hit[1] + 1
-    #       elsif hit[0] <= 10
-    #         @row = hit[0] + 1
-    #       end
-    #     # else
-    #     #   #multiple hits! we have direction.
-
-    #     # end
-    #   else 
-
-    #     @col += @last_shot_hit ? 1 : 1
-
-    #     if @col >= 10 # finished row, wrap down
-    #       @last_shot_hit = false
-    #       @row += 1
-    #       @col = 0 
-    #     end
-
-    #     @row = 0 if @row >= 10 # game should will end before this, but just incase
-    #   end
-
-    #   break if @enemy_board[@row][@col] == ' ' #not been tried yet.
-    # end
-
-    #puts "BSP: I'm shooting: #{@row} #{@col}"
     
     return @row, @col
   end
@@ -293,13 +284,15 @@ class TaylorPlayer < Player
   end
 
   def log_game_won(game_won)
-    puts "ENEMY BOARD"
-    print_board @enemy_board
+    if @DEBUG
+      puts "ENEMY BOARD"
+      print_board @enemy_board
 
-    puts "OPENINGS"
-    @enemy_opening_shots.each do |row|
-      puts "#{row}\n"
+      puts "OPENINGS"
+      @enemy_opening_shots.each do |row|
+        puts "#{row}\n"
+      end
+      puts "\t *** #{@num_shots}"
     end
-    puts "\t *** #{@num_shots}"
   end
 end
