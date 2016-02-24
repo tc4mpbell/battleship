@@ -1,4 +1,4 @@
-class BetterScannerPlayer < Player
+class TaylorPlayer < Player
   def initialize
     @enemy_opening_shots = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
