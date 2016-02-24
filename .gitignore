@@ -30,4 +30,4 @@ doc/
 # project settings
 
 # hides players immediately under players dir, we still want to commit examples
-players/*.rb
+#players/*.rb
