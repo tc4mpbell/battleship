@@ -68,6 +68,8 @@ class TaylorPlayer < Player
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
     ]
 
+    # print_board @board
+
     @last_spot_tried = initial_spot_to_shoot
     puts "INIT SPOT: #{@last_spot_tried}" if @DEBUG
   end
@@ -323,7 +325,10 @@ class TaylorPlayer < Player
 
   def log_game_won(game_won)
 
-    #if @DEBUG
+    if @DEBUG
+      puts "\nMY BOARD"
+      print_board @board
+
       puts "ENEMY BOARD"
       print_board @enemy_board
 
@@ -332,6 +337,6 @@ class TaylorPlayer < Player
         puts "#{row}\n"
       end
       puts "\t *** #{@num_shots}"
-    #end
+    end
   end
 end

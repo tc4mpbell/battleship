@@ -77,7 +77,7 @@ class OldPlayer < Player
     
 
     ships.each do |ship, length|
-      puts "SHIP: #{ship}, #{length}"
+      puts "SHIP: #{ship}, #{length}" if @DEBUG
       # invalid spots: 
       # - Overlapping another ship
       # - less than length spaces away from chosen edge
@@ -102,8 +102,10 @@ class OldPlayer < Player
       end
     end
 
-    @board.each do |row|
-      puts "#{row}\n"
+    if @DEBUG
+      @board.each do |row|
+        puts "#{row}\n"
+      end
     end
 
     @board
@@ -293,13 +295,15 @@ class OldPlayer < Player
   end
 
   def log_game_won(game_won)
-    puts "ENEMY BOARD"
-    print_board @enemy_board
+    if @DEBUG
+      puts "ENEMY BOARD"
+      print_board @enemy_board
 
-    puts "OPENINGS"
-    @enemy_opening_shots.each do |row|
-      puts "#{row}\n"
+      puts "OPENINGS"
+      @enemy_opening_shots.each do |row|
+        puts "#{row}\n"
+      end
+      puts "\t *** #{@num_shots}"
     end
-    puts "\t *** #{@num_shots}"
   end
 end
