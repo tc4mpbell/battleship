@@ -210,7 +210,7 @@ class TaylorPlayer < Player
           end
         #end
 
-        puts "TRYING: #{@last_spot_tried}"
+        #puts "TRYING: #{@last_spot_tried}"
 
         if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
           @just_sunk = false # update
