@@ -176,49 +176,54 @@ class TaylorPlayer < Player
   #     else x = 0
   def get_next_spot_to_shoot
     ix = 0
-    time = Benchmark.measure do
-      loop do
-        ix += 1
-        #puts "(in loop #{ix+1})"
-        # if @just_sunk
-        #   @last_spot_tried = initial_spot_to_shoot 
-        # else 
-          last_row = @last_spot_tried[0]
-          last_col = @last_spot_tried[1]
+  
+    loop do
+      ix += 1
+      #puts "(in loop #{ix+1})"
+      # if @just_sunk
+      #   @last_spot_tried = initial_spot_to_shoot 
+      # else 
+        last_row = @last_spot_tried[0]
+        last_col = @last_spot_tried[1]
 
-          if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
-            #puts "AT LAST COL: #{last_col}"
-            if last_row == @board.length - 1 #at end of board; jump to top
-              #puts "1. Jumped to top from #{@last_spot_tried}"
-              next_row = 0
-            else
-              next_row = last_row + 1
-            end
+        if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
+          #puts "AT LAST COL: #{last_col}"
+          if last_row == @board.length - 1 #at end of board; jump to top
+            #puts "1. Jumped to top from #{@last_spot_tried}"
+            next_row = 0
+          else
+            next_row = last_row + 1
+          end
 
-            @last_spot_tried = next_row, 0
-          elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
-            if last_row == @board.length - 1 #at end of board; jump to top
-              #puts "2. Jumped to top from #{@last_spot_tried}"
-              next_row = 0
-            else
-              next_row = last_row + 1
-            end
+          @last_spot_tried = next_row, 0
+        elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
+          if last_row == @board.length - 1 #at end of board; jump to top
+            #puts "2. Jumped to top from #{@last_spot_tried}"
+            next_row = 0
+          else
+            next_row = last_row + 1
+          end
 
-            @last_spot_tried = next_row, 1
+          @last_spot_tried = next_row, 1
+        else
+          if ix > 100
+            # shake it upf if we've been looping too long
+            @last_spot_tried = last_row, last_col + 1
           else
             @last_spot_tried = last_row, last_col + 2
           end
-        #end
-
-        #puts "TRYING: #{@last_spot_tried}"
-
-        if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
-          @just_sunk = false # update
-          break
         end
+      #end
+
+      #puts "TRYING: #{@last_spot_tried}"
+
+      if valid_spot_to_shoot?(@last_spot_tried[0], @last_spot_tried[1])
+        @just_sunk = false # update
+        break
       end
     end
-    puts time
+
+    #puts "LOOKED: #{ix}"
 
     @last_spot_tried 
   end
@@ -242,14 +247,12 @@ class TaylorPlayer < Player
       puts "LOOKING AROUND LAST HIT" if @DEBUG
       print_board @enemy_board if @DEBUG
     else 
-      puts "BEFORE GET NEXT"
       spot = get_next_spot_to_shoot
-      puts "AFTER GET NEXT"
     end
 
     #puts "NEW SPOT! : #{spot}"
-    puts "OUT of loop"
-    puts "SHOOTING: #{spot}" if @DEBUG
+    #puts "OUT of loop"
+    #puts "SHOOTING: #{spot}" if @DEBUG
     @row = spot[0]
     @col = spot[1]
     

@@ -152,14 +152,14 @@ class OldPlayer < Player
 
       if last_col == @board[0].length - 1 # at very last spot, so start at ix 1
         if last_row == @board.length - 1 #at end of board; shouldn't happen
-          puts "Shouldn't be here..."
+          #puts "Shouldn't be here..."
           last_row = 0
         end
 
         @last_spot_tried = last_row + 1, 0
       elsif last_col == @board[0].length - 2 # at 2nd to last spot, so start at ix 0
         if last_row == @board.length - 1 #at end of board; shouldn't happen
-          puts "Shouldn't be here..."
+          #puts "Shouldn't be here..."
           last_row = 0
         end
 
