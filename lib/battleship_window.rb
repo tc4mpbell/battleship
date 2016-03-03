@@ -18,13 +18,20 @@ class BattleshipWindow < Gosu::Window
 
     @player_one_win_count = @runner.wins[@player_one]
     @player_two_win_count = @runner.wins[@player_two]
+
+    @grid_spacing = 50
+    @grid_size = 12
   end
 
   def update
-    if @runs_completed < @runs
+    timer = 0
+    if @runs_completed < @runs and timer < 1000000
       @runner.run_game
       @runs_completed += 1
+      timer = 0
     end
+
+    timer+=1
 
     @player_one_win_count = @runner.wins[@player_one]
     @player_two_win_count = @runner.wins[@player_two]
@@ -72,6 +79,45 @@ class BattleshipWindow < Gosu::Window
       HEIGHT - win_height * @player_two_win_count - @font.height - 10,
       1, 0.5, 0.0, 1, 1, Gosu::Color::WHITE
     )
+
+
+    @runner.instance_variable_get(:@boards).each do |player, board|
+      offset_y = 50
+      if @player_one == player
+        offset_x = 50
+      else
+        offset_x = 700
+      end
+      #BOARDS
+      
+      
+      @grid_size.times do |ix|
+        puts "ix #{ix}"
+        draw_line(ix*@grid_spacing+offset_x, @grid_spacing+offset_y, Gosu::Color::WHITE, ix*@grid_spacing+offset_x, @grid_spacing*@grid_size-@grid_spacing+offset_y, Gosu::Color::WHITE)
+        draw_line(@grid_spacing+offset_x, ix*@grid_spacing+offset_y, Gosu::Color::WHITE, @grid_spacing*@grid_size-@grid_spacing+offset_x, ix*@grid_spacing+offset_y, Gosu::Color::WHITE)
+      end
+
+      board_array = board.instance_variable_get(:@board)
+
+      board_array.each_with_index do |row,y|
+        row.each_with_index do |col,x|
+          if col != ' ' and col != 'X' # not empty or hit
+            # ship
+            top, left = board_xy_to_world_xy(x, y, offset_x, offset_y)
+
+            draw_triangle(top+@grid_spacing-2, left+2, Gosu::Color::YELLOW, top+2, left+@grid_spacing-2, Gosu::Color::GREEN, top+@grid_spacing-2, left+@grid_spacing-2, Gosu::Color::BLUE)
+          end
+        end
+      end
+
+      puts "player: #{player} - b: #{board}"
+    end
+
+  end
+
+  # returns top left of the space at X,Y in the board array
+  def board_xy_to_world_xy x, y, offset_x, offset_y
+    return x*@grid_spacing+offset_x, y*@grid_spacing+offset_y
   end
 
   def needs_cursor?
